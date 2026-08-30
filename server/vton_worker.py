@@ -19,12 +19,7 @@ def main():
     result = model.generate(
         person_image=person,
         cloth_image=cloth,
-        cloth_type="upper",
-        width=384,
-        height=512,
-        seed=7,
-        num_inference_steps=50,
-        guidance_scale=2.5,
+        cloth_type="upper"
     )
 
     result.save(output_path)
