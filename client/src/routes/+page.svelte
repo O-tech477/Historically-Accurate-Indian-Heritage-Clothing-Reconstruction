@@ -1,2 +1,16 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+    import TopBar from "../components/topBar/topBar.svelte"
+    import ImageController from "../components/imageController/imageController.svelte"
+</script>
+
+<div class="main-div">
+    <TopBar></TopBar>
+    <ImageController></ImageController>
+</div>
+
+
+<style>
+    :global(body){
+        background-color: #E36414;
+    }
+</style>
