@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ClothReconstruction</string>
+    <string name="title_activity_main">ClothReconstruction</string>
+    <string name="package_name">com.otech.clothreconstruction</string>
+    <string name="custom_url_scheme">com.otech.clothreconstruction</string>
+</resources>

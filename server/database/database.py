@@ -17,7 +17,6 @@ class Database():
         print("THE TYPE RECEIVED HERE IS:", garment_type)
         self.cur.execute(f"SELECT prompt FROM prompts WHERE id='{garment_type}'")
 
-
         results = self.cur.fetchone()
 
         return results[0]
