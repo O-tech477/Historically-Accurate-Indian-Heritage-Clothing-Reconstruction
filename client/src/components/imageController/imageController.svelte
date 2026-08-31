@@ -5,22 +5,25 @@
     let processing = $state(false);
     let error = $state("");
 
+    let garmentType = $state("kurta");
+
     const SERVER_URL = import.meta.env.VITE_PIPELINE_SERVER_URL;
 
     function handleFiles() {
         if (!files || files.length === 0) { return; }
 
         const file = files[0];
-        console.log("Selected file:", file);
-
         const reader = new FileReader();
-        reader.onload = () => { inputPreview = reader.result as string; };
+        reader.onload = () => {
+            inputPreview = reader.result as string;
+        };
 
         reader.readAsDataURL(file);
 
         outputPreview = "";
         error = "";
     }
+
 
     async function processImage() {
         if (!files || files.length === 0) { return; }
@@ -31,9 +34,7 @@
 
         const formData = new FormData();
         formData.append("image", file);
-
-        console.log("Sending image to FastAPI...");
-
+        formData.append("garment_type", garmentType);
         try {
             const response = await fetch(
                 `${SERVER_URL}/get_image`,
@@ -52,6 +53,7 @@
             }
 
             const blob = await response.blob();
+
             console.log("Received output:", blob);
 
             const reader = new FileReader();
@@ -83,6 +85,23 @@
         Upload the image of the person
     </p>
 
+    <div class="cloth-selector">
+
+        <label for="garment-type">
+            Cloth type
+        </label>
+
+        <select
+            id="garment-type"
+            bind:value={garmentType}
+            disabled={processing}
+        >
+            <option value="Kurta">Kurta</option>
+            <option value="Western Shirt">Western Shirt</option>
+        </select>
+
+    </div>
+
 
     <input
         id="file-input"
@@ -98,14 +117,8 @@
         <label class="image input" for="file-input">
 
             {#if inputPreview}
-
-                <img
-                    src={inputPreview}
-                    alt="Uploaded person"
-                />
-
+                <img src={inputPreview} alt="Uploaded person"/>
             {:else}
-
                 <div class="upload-content">
                     <div class="upload-icon">+</div>
                     <p>Click to upload</p>
@@ -119,21 +132,13 @@
         <div class="image output">
 
             {#if processing}
-
                 <div class="loading-container">
                     <div class="spinner"></div>
                     <p>Processing...</p>
                 </div>
-
             {:else if outputPreview}
-
-                <img
-                    src={outputPreview}
-                    alt="Processed result"
-                />
-
+                <img src={outputPreview} alt="Processed result"/>
             {:else}
-
                 <p class="placeholder">
                     Output will appear here
                 </p>
@@ -165,33 +170,65 @@
 
 
 <style>
+
     .main-div {
         width: 80%;
         min-height: 70vh;
         margin-left: 10vw;
         margin-top: 5vh;
         padding: 20px;
-
         background-color: #460B2F;
-
         display: flex;
         flex-direction: column;
         align-items: center;
         box-sizing: border-box;
-
         border-radius: 10px;
     }
 
 
     .heading {
         color: white;
-
         font-size: 26px;
         font-weight: bold;
-
-        margin-bottom: 30px;
-
+        margin-bottom: 20px;
         text-align: center;
+    }
+
+
+    .cloth-selector {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 15px;
+        gap: 10px;
+        color: white;
+    }
+
+
+    .cloth-selector label {
+        font-size: 16px;
+        font-weight: bold;
+
+        margin-bottom: 8px;
+    }
+
+
+    .cloth-selector select {
+        min-width: 220px;
+        padding: 10px 35px 10px 12px;
+        border: none;
+        border-radius: 6px;
+        background-color: white;
+        color: #460B2F;
+        font-size: 16px;
+        cursor: pointer;
+        outline: none;
+    }
+
+
+    .cloth-selector select:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
     }
 
 
@@ -204,7 +241,6 @@
         display: flex;
         flex-direction: row;
         gap: 30px;
-
         width: 100%;
         justify-content: center;
     }
@@ -213,19 +249,13 @@
     .image {
         width: 400px;
         height: 500px;
-
         border: 2px dashed rgba(255, 255, 255, 0.5);
-
         border-radius: 12px;
-
         display: flex;
         align-items: center;
         justify-content: center;
-
         overflow: hidden;
-
         background-color: rgba(255, 255, 255, 0.05);
-
         box-sizing: border-box;
     }
 
@@ -248,7 +278,6 @@
     .image img {
         width: 100%;
         height: 100%;
-
         object-fit: contain;
     }
 
@@ -257,7 +286,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-
         color: rgba(255, 255, 255, 0.7);
     }
 
@@ -265,18 +293,13 @@
     .upload-icon {
         width: 50px;
         height: 50px;
-
         border: 2px solid rgba(255, 255, 255, 0.7);
-
         border-radius: 50%;
-
         display: flex;
         align-items: center;
         justify-content: center;
-
         font-size: 32px;
         font-weight: 300;
-
         margin-bottom: 15px;
     }
 
@@ -299,7 +322,6 @@
         flex-direction: column;
         align-items: center;
         gap: 15px;
-
         color: white;
     }
 
@@ -307,13 +329,9 @@
     .spinner {
         width: 45px;
         height: 45px;
-
         border: 4px solid rgba(255, 255, 255, 0.25);
-
         border-top-color: white;
-
         border-radius: 50%;
-
         animation: spin 0.8s linear infinite;
     }
 
@@ -324,18 +342,13 @@
         }
     }
 
-
     button {
         margin-top: 30px;
-
         padding: 12px 35px;
-
         border: none;
         border-radius: 6px;
-
         font-size: 16px;
         font-weight: bold;
-
         cursor: pointer;
     }
 
@@ -345,7 +358,6 @@
         opacity: 0.5;
     }
 
-
     .error {
         color: #ffb3b3;
         margin-top: 15px;
@@ -353,66 +365,69 @@
     }
 
 
-    @media (max-width: 768px) {
 
+    @media (max-width: 768px) {
         .main-div {
             width: 94%;
             min-height: auto;
-
             margin-left: auto;
             margin-right: auto;
-
             margin-top: 3vh;
-
             padding: 16px;
         }
 
-
         .heading {
             font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .cloth-selector {
             margin-bottom: 20px;
         }
 
+        .cloth-selector select {
+            width: 100%;
+            max-width: 400px;
+        }
 
         .image-container {
             flex-direction: column;
-
             align-items: center;
-
             gap: 20px;
         }
-
 
         .image {
             width: 100%;
             max-width: 400px;
             aspect-ratio: 4 / 5;
-
             height: auto;
         }
-
 
         button {
             width: 100%;
             max-width: 400px;
-
             padding: 14px 20px;
-
             margin-top: 25px;
-
             font-size: 16px;
         }
     }
 
 
     @media (max-width: 400px) {
+
         .main-div {
             width: 96%;
             padding: 12px;
         }
+
         .heading {
             font-size: 18px;
         }
+
+        .cloth-selector select {
+            font-size: 15px;
+        }
+
         .image {
             aspect-ratio: 4 / 5;
         }

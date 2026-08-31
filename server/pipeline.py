@@ -1,7 +1,9 @@
 import subprocess
 from pathlib import Path
 
-from fastapi import FastAPI, File, UploadFile
+from database.database import Database
+
+from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -49,7 +51,7 @@ app.add_middleware(
 
 
 @app.post("/get_image")
-async def get_image(image: UploadFile = File(...)):
+async def get_image(garment_type:str = Form(...), image: UploadFile = File(...)):
 
     person = SERVER_DIR / "person.jpeg"
     cloth = SERVER_DIR / "cloth.png"
@@ -60,13 +62,14 @@ async def get_image(image: UploadFile = File(...)):
     with open(person, "wb") as f:
         f.write(image_data)
 
-    prompt = """
-    Traditional Kerala angavastram, garment only, no person, no mannequin, full cloth visible, front view,
-    centered, isolated on pure white background, rectangular draped shawl, plain off-white cotton, traditional
-    gold kasavu border, minimal design, realistic fabric, clean product photography.
-    """
+    db = Database()
 
+
+    print("Garment type received:", repr(garment_type))
+    prompt = db.getPrompt(garment_type)
     generate_cloth(prompt)
+    db.closeDB()
+
 
     run_catvton(
         str(person),
