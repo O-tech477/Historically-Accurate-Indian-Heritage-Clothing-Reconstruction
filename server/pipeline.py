@@ -60,14 +60,11 @@ async def get_image(image: UploadFile = File(...)):
     with open(person, "wb") as f:
         f.write(image_data)
 
-    prompt = """Single traditional men's royal-court garment, one garment only,
-    full garment visible, centered on pure white background.
-    Fitted torso, slightly flared waist, overlapping diagonal front panels
-    with side cloth ties, no buttons.
-    Long fitted sleeves to wrists.
-    Plain cotton or silk, cream and ivory with deep-red accents.
-    Narrow embroidery along front panel and hem.
-    Realistic fabric, elegant tailoring, studio product photography."""
+    prompt = """
+    Traditional Kerala angavastram, garment only, no person, no mannequin, full cloth visible, front view,
+    centered, isolated on pure white background, rectangular draped shawl, plain off-white cotton, traditional
+    gold kasavu border, minimal design, realistic fabric, clean product photography.
+    """
 
     generate_cloth(prompt)
 

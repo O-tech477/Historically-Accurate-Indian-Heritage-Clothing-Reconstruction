@@ -5,14 +5,16 @@
     let processing = $state(false);
     let error = $state("");
 
+    const SERVER_URL = import.meta.env.VITE_PIPELINE_SERVER_URL;
+
     function handleFiles() {
-        if (!files || files.length === 0) {return;}
+        if (!files || files.length === 0) { return; }
 
         const file = files[0];
         console.log("Selected file:", file);
 
         const reader = new FileReader();
-        reader.onload = () => {inputPreview = reader.result as string;};
+        reader.onload = () => { inputPreview = reader.result as string; };
 
         reader.readAsDataURL(file);
 
@@ -20,9 +22,8 @@
         error = "";
     }
 
-
     async function processImage() {
-        if (!files || files.length === 0) {return;}
+        if (!files || files.length === 0) { return; }
 
         const file = files[0];
         processing = true;
@@ -32,9 +33,10 @@
         formData.append("image", file);
 
         console.log("Sending image to FastAPI...");
+
         try {
             const response = await fetch(
-                "http://localhost:8000/get_image",
+                `${SERVER_URL}/get_image`,
                 {
                     method: "POST",
                     body: formData
@@ -42,6 +44,7 @@
             );
 
             console.log("FastAPI response:", response.status);
+
             if (!response.ok) {
                 throw new Error(
                     `FastAPI returned ${response.status}`
@@ -50,6 +53,7 @@
 
             const blob = await response.blob();
             console.log("Received output:", blob);
+
             const reader = new FileReader();
 
             reader.onload = () => {
@@ -90,6 +94,7 @@
 
 
     <div class="image-container">
+
         <label class="image input" for="file-input">
 
             {#if inputPreview}
@@ -109,6 +114,7 @@
             {/if}
 
         </label>
+
 
         <div class="image output">
 
@@ -184,6 +190,8 @@
         font-weight: bold;
 
         margin-bottom: 30px;
+
+        text-align: center;
     }
 
 
@@ -191,9 +199,14 @@
         display: none;
     }
 
+
     .image-container {
         display: flex;
+        flex-direction: row;
         gap: 30px;
+
+        width: 100%;
+        justify-content: center;
     }
 
 
@@ -212,6 +225,8 @@
         overflow: hidden;
 
         background-color: rgba(255, 255, 255, 0.05);
+
+        box-sizing: border-box;
     }
 
 
@@ -252,6 +267,7 @@
         height: 50px;
 
         border: 2px solid rgba(255, 255, 255, 0.7);
+
         border-radius: 50%;
 
         display: flex;
@@ -273,6 +289,8 @@
 
     .placeholder {
         color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+        padding: 20px;
     }
 
 
@@ -291,6 +309,7 @@
         height: 45px;
 
         border: 4px solid rgba(255, 255, 255, 0.25);
+
         border-top-color: white;
 
         border-radius: 50%;
@@ -330,6 +349,73 @@
     .error {
         color: #ffb3b3;
         margin-top: 15px;
+        text-align: center;
+    }
+
+
+    @media (max-width: 768px) {
+
+        .main-div {
+            width: 94%;
+            min-height: auto;
+
+            margin-left: auto;
+            margin-right: auto;
+
+            margin-top: 3vh;
+
+            padding: 16px;
+        }
+
+
+        .heading {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+
+        .image-container {
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 20px;
+        }
+
+
+        .image {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 4 / 5;
+
+            height: auto;
+        }
+
+
+        button {
+            width: 100%;
+            max-width: 400px;
+
+            padding: 14px 20px;
+
+            margin-top: 25px;
+
+            font-size: 16px;
+        }
+    }
+
+
+    @media (max-width: 400px) {
+        .main-div {
+            width: 96%;
+            padding: 12px;
+        }
+        .heading {
+            font-size: 18px;
+        }
+        .image {
+            aspect-ratio: 4 / 5;
+        }
     }
 
 </style>
